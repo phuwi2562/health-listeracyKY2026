@@ -645,6 +645,69 @@
       margin-bottom: 12px;
     }
 
+    .thank-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(13, 28, 45, .46);
+    }
+
+    .thank-modal.open {
+      display: grid;
+    }
+
+    .thank-card {
+      width: min(460px, 100%);
+      border-radius: 14px;
+      padding: 5px;
+      background: linear-gradient(135deg, var(--teal), #35a367, var(--amber), var(--coral));
+      box-shadow: 0 24px 70px rgba(18, 38, 61, .28);
+    }
+
+    .thank-inner {
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .97), rgba(250, 255, 253, .97)),
+        #fff;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .thank-icon {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      box-shadow: 0 12px 24px rgba(15, 159, 149, .28);
+    }
+
+    .thank-inner h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.35;
+      color: var(--ink);
+    }
+
+    .thank-inner p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.72;
+      text-align: left;
+    }
+
+    .thank-inner .btn {
+      width: 100%;
+      margin-top: 14px;
+    }
+
     .small-actions {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -917,6 +980,23 @@
         </div>
       </nav>
     </aside>
+
+    <div class="thank-modal" id="thankModal" role="dialog" aria-modal="true" aria-labelledby="thankTitle">
+      <div class="thank-card">
+        <div class="thank-inner">
+          <div class="thank-icon" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+              <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2 id="thankTitle">คณะกรรมการพัฒนาสถานีสุขภาพตำบลคำใหญ่</h2>
+          <p>
+            ขอขอบคุณท่านเป็นอย่างสูง ที่ท่านได้กรุณาเสียสละเวลาอันมีค่าของท่านตอบแบบประเมินหรือให้ข้อมูลทีม อสม. ลงข้อมูล ซึ่งคณะกรรมการฯ จะนำข้อมูลทั้งหมดมาประมวลผลและให้พัฒนางานเพื่อสุขภาพที่ดีของประชาชนตำบลคำใหญ่เราครับ
+          </p>
+          <button class="btn" id="closeThankBtn" type="button">ปิด</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -976,6 +1056,7 @@
       levelBars: document.querySelector("#levelBars"),
       villageCards: document.querySelector("#villageCards"),
       villageRows: document.querySelector("#villageRows"),
+      thankModal: document.querySelector("#thankModal"),
       scriptUrl: document.querySelector("#scriptUrl")
     };
 
@@ -1063,6 +1144,14 @@
     function closeDrawer() {
       els.drawer.classList.remove("open");
       els.drawer.setAttribute("aria-hidden", "true");
+    }
+
+    function showThankMessage() {
+      els.thankModal.classList.add("open");
+    }
+
+    function closeThankMessage() {
+      els.thankModal.classList.remove("open");
     }
 
     function saveLocal(item) {
@@ -1169,12 +1258,12 @@
       try {
         saveLocal(item);
         await saveRemote(item);
-        alert(`บันทึกสำเร็จ\nคะแนน ${score}/50\nระดับ ${item.level}`);
         document.querySelector("#surveyForm").reset();
         document.querySelectorAll("input[name='gender']").forEach(input => input.checked = false);
         document.querySelector("#participantVillage").value = "";
         document.querySelector("#participantAge").value = "";
         updateScore();
+        showThankMessage();
       } catch (error) {
         alert(`บันทึกในเครื่องแล้ว แต่ยังส่ง Google Sheet ไม่สำเร็จ\n${error.message}`);
       } finally {
@@ -1440,6 +1529,10 @@
     document.querySelector("#openMenu").addEventListener("click", openDrawer);
     document.querySelector("#closeMenu").addEventListener("click", closeDrawer);
     document.querySelector("#closeShade").addEventListener("click", closeDrawer);
+    document.querySelector("#closeThankBtn").addEventListener("click", closeThankMessage);
+    document.querySelector("#thankModal").addEventListener("click", event => {
+      if (event.target.id === "thankModal") closeThankMessage();
+    });
     document.querySelectorAll("[data-view]").forEach(button => {
       button.addEventListener("click", () => setView(button.dataset.view));
     });
