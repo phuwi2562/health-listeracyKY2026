@@ -1001,6 +1001,7 @@
 
   <script>
     const SHEET_ID = "1VeO64vU8JLX7rK1SrgD45hEVfQ4A0UnOATIlgJxJ8DA";
+    const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzJUz57dg2e5LDMgaUdDrXOrzfMpPj153Q6hwaIMXkxJnhSm8y-JRMsycZBb6gu80GBg/exec";
     const questions = [
       "รู้ค่าความดันโลหิตของตนเอง",
       "รู้ระดับน้ำตาลในเลือดของตนเอง",
@@ -1063,8 +1064,9 @@
     let results = JSON.parse(localStorage.getItem("healthLiteracyResults") || "[]");
     let settings = JSON.parse(localStorage.getItem("healthLiteracySettings") || "{}");
     let isSaving = false;
+    settings.scriptUrl = settings.scriptUrl || DEFAULT_SCRIPT_URL;
     settings.activePhase = settings.activePhase || "ก่อนดำเนินการ";
-    els.scriptUrl.value = settings.scriptUrl || "";
+    els.scriptUrl.value = settings.scriptUrl;
 
     function levelFromAverage(avg) {
       if (avg >= 4.51) return "สูงมาก";
@@ -1160,8 +1162,8 @@
     }
 
     async function saveRemote(item) {
-      if (!settings.scriptUrl) return { skipped: true };
-      const response = await fetch(settings.scriptUrl, {
+      const scriptUrl = settings.scriptUrl || DEFAULT_SCRIPT_URL;
+      const response = await fetch(scriptUrl, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -1183,8 +1185,8 @@
     }
 
     async function loadRemote() {
-      if (!settings.scriptUrl) return;
-      const data = await jsonp(`${settings.scriptUrl}?action=list&sheetId=${encodeURIComponent(SHEET_ID)}`);
+      const scriptUrl = settings.scriptUrl || DEFAULT_SCRIPT_URL;
+      const data = await jsonp(`${scriptUrl}?action=list&sheetId=${encodeURIComponent(SHEET_ID)}`);
       if (Array.isArray(data.items)) {
         results = data.items.filter((item, index, arr) => {
           const key = `${item.timestamp}-${normalizePhase(item)}-${normalizeVillage(item)}-${item.gender}-${item.age}-${item.score}`;
@@ -1554,7 +1556,8 @@
       renderDashboard();
     });
     document.querySelector("#saveSettings").addEventListener("click", () => {
-      settings.scriptUrl = els.scriptUrl.value.trim();
+      settings.scriptUrl = els.scriptUrl.value.trim() || DEFAULT_SCRIPT_URL;
+      els.scriptUrl.value = settings.scriptUrl;
       settings.activePhase = document.querySelector("input[name='adminPhase']:checked")?.value || "ก่อนดำเนินการ";
       localStorage.setItem("healthLiteracySettings", JSON.stringify(settings));
       applyPhaseSetting();
