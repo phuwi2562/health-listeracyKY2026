@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ประเมินความรอบรู้ด้านสุขภาพ</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fb;
+      --ink: #132238;
+      --muted: #607086;
+      --line: #dbe3ee;
+      --panel: #ffffff;
+      --teal: #0f9f95;
+      --teal-dark: #087d75;
+      --coral: #f26d5b;
+      --amber: #f4b740;
+      --green: #35a367;
+      --red: #d64f4f;
+      --shadow: 0 18px 44px rgba(31, 54, 78, .12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(15, 159, 149, .09), transparent 340px),
+        var(--bg);
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .shell {
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--bg);
+      position: relative;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: calc(14px + env(safe-area-inset-top)) 16px 12px;
+      background: rgba(246, 248, 251, .94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(219, 227, 238, .74);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--teal), #4fb99f);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 22px rgba(15, 159, 149, .24);
+      flex: 0 0 auto;
+    }
+
+    .mark svg { width: 26px; height: 26px; }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 20px rgba(22, 41, 65, .06);
+    }
+
+    main {
+      padding: 16px 16px 94px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-bottom: 14px;
+    }
+
+    .score-panel {
+      background: #17324d;
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 16px;
+      min-height: 156px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    .score-panel small {
+      color: rgba(255, 255, 255, .75);
+      font-size: 12px;
+    }
+
+    .score-number {
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 800;
+      margin: 12px 0 6px;
+    }
+
+    .level-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .14);
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .visual {
+      border-radius: var(--radius);
+      min-height: 156px;
+      overflow: hidden;
+      background: linear-gradient(160deg, #ffffff, #e8f4f1);
+      border: 1px solid #d8ece8;
+      position: relative;
+      box-shadow: 0 14px 32px rgba(31, 54, 78, .08);
+    }
+
+    .visual svg {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+    }
+
+    .progress-wrap {
+      margin: 14px 0 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .bar {
+      height: 10px;
+      background: #e7edf4;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--teal), var(--amber), var(--coral));
+      transition: width .24s ease;
+    }
+
+    .field {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    .field input, .field textarea {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      background: transparent;
+      font-size: 16px;
+    }
+
+    .segment {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .segment input { display: none; }
+
+    .segment label {
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #fbfdff;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .segment input:checked + label {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+      box-shadow: 0 8px 18px rgba(15, 159, 149, .24);
+    }
+
+    .question {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 8px 18px rgba(31, 54, 78, .05);
+    }
+
+    .q-title {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 12px;
+      font-weight: 700;
+      line-height: 1.42;
+    }
+
+    .q-no {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #eef8f6;
+      color: var(--teal-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .scale input { display: none; }
+
+    .scale label {
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #fbfdff;
+      color: var(--muted);
+      font-weight: 800;
+      transition: transform .12s ease, background .12s ease, color .12s ease, border-color .12s ease;
+    }
+
+    .scale label:active { transform: scale(.97); }
+
+    .scale input:checked + label {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+      box-shadow: 0 8px 18px rgba(15, 159, 149, .24);
+    }
+
+    .scale-caption {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
+    .action-row {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 20;
+      transform: translateX(-50%);
+      width: min(520px, 100%);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: rgba(246, 248, 251, .94);
+      border-top: 1px solid rgba(219, 227, 238, .86);
+      backdrop-filter: blur(14px);
+    }
+
+    .btn {
+      min-height: 48px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      color: #fff;
+      background: var(--teal);
+    }
+
+    .btn.secondary {
+      background: var(--panel);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .btn:disabled {
+      cursor: wait;
+      opacity: .78;
+    }
+
+    .spinner {
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, .38);
+      border-top-color: #fff;
+      animation: spin .8s linear infinite;
+    }
+
+    .secondary .spinner {
+      border-color: rgba(19, 34, 56, .2);
+      border-top-color: var(--ink);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .drawer.open { pointer-events: auto; }
+
+    .shade {
+      position: absolute;
+      inset: 0;
+      background: rgba(13, 28, 45, .45);
+      opacity: 0;
+      transition: opacity .18s ease;
+    }
+
+    .drawer.open .shade { opacity: 1; }
+
+    .menu {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: min(88vw, 360px);
+      height: 100%;
+      background: var(--panel);
+      padding: calc(18px + env(safe-area-inset-top)) 16px 18px;
+      transform: translateX(100%);
+      transition: transform .2s ease;
+      box-shadow: -18px 0 44px rgba(18, 38, 61, .2);
+      overflow: auto;
+    }
+
+    .drawer.open .menu { transform: translateX(0); }
+
+    .menu-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .menu h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .menu-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .menu-item {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 8px;
+      background: #f7fafc;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      padding: 0 12px;
+      font-weight: 750;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .section-title {
+      margin: 18px 0 8px;
+      font-size: 15px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .analysis-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 8px 18px rgba(31, 54, 78, .05);
+    }
+
+    .summary-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .bar-item {
+      display: grid;
+      grid-template-columns: 84px 1fr 48px;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mini-bar {
+      height: 9px;
+      border-radius: 999px;
+      background: #e7edf4;
+      overflow: hidden;
+    }
+
+    .mini-bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--teal);
+    }
+
+    .table-wrap {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      background: #f8fbfd;
+      font-weight: 800;
+    }
+
+    .advice-cell {
+      min-width: 280px;
+      white-space: normal;
+      line-height: 1.55;
+    }
+
+    .notice {
+      border-radius: var(--radius);
+      padding: 12px;
+      background: #fff7e2;
+      color: #74510d;
+      border: 1px solid #f6df9c;
+      font-size: 13px;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    .small-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .small-actions .btn {
+      min-height: 42px;
+      font-size: 13px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 370px) {
+      .hero { grid-template-columns: 1fr; }
+      .visual { min-height: 118px; }
+      .small-actions { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      header, .action-row, .drawer, .no-print { display: none !important; }
+      body, .shell { background: #fff; }
+      main { padding: 0; }
+      .panel { display: none; }
+      .panel.printing { display: block; }
+      .question, .field, .progress-wrap, .score-panel, .visual, .stat, .table-wrap {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none">
+              <path d="M32 55s-20-11.7-20-29.2C12 17.8 18.4 12 25.7 12c4.1 0 7.4 2 9.3 5.1C36.9 14 40.2 12 44.3 12 51.6 12 58 17.8 58 25.8 58 43.3 38 55 38 55h-6Z" fill="#fff" opacity=".95"/>
+              <path d="M18 32h9l4-9 6 18 5-9h8" stroke="#0f9f95" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1 id="screenTitle">ประเมินความรอบรู้ด้านสุขภาพ</h1>
+            <div class="subtitle">10 ข้อ • Likert Scale 5 ระดับ • 50 คะแนน</div>
+          </div>
+        </div>
+        <button class="icon-btn" id="openMenu" title="เมนู" aria-label="เมนู">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel active" id="surveyPanel">
+        <div class="hero">
+          <div class="score-panel">
+            <div>
+              <small>คะแนนปัจจุบัน</small>
+              <div class="score-number"><span id="scoreNow">0</span><small>/50</small></div>
+            </div>
+            <div class="level-pill" id="levelNow">ยังไม่ครบทุกข้อ</div>
+          </div>
+          <div class="visual" aria-label="ภาพประกอบสุขภาพ">
+            <svg viewBox="0 0 180 180" role="img">
+              <rect width="180" height="180" fill="#e9f7f4"/>
+              <circle cx="130" cy="38" r="28" fill="#f4b740" opacity=".35"/>
+              <path d="M29 142c8-37 31-56 69-58 24-1 42-15 51-38 13 36 6 68-21 95-29 28-66 31-99 1Z" fill="#0f9f95" opacity=".16"/>
+              <rect x="39" y="53" width="68" height="84" rx="8" fill="#fff" stroke="#bfd9d4" stroke-width="2"/>
+              <rect x="52" y="67" width="42" height="6" rx="3" fill="#0f9f95"/>
+              <rect x="52" y="84" width="31" height="6" rx="3" fill="#bfd9d4"/>
+              <rect x="52" y="101" width="42" height="6" rx="3" fill="#bfd9d4"/>
+              <path d="M120 88c14 0 26 12 26 26s-12 26-26 26-26-12-26-26 12-26 26-26Z" fill="#17324d"/>
+              <path d="M109 115h8l4-11 6 20 5-9h9" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M58 42h31" stroke="#17324d" stroke-width="8" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span id="answeredCount">ตอบแล้ว 0/10</span>
+            <span>ค่าเฉลี่ย <b id="avgNow">0.00</b></span>
+          </div>
+          <div class="bar"><span id="progressBar"></span></div>
+        </div>
+
+        <div class="field">
+          <label>เพศ</label>
+          <div class="segment" role="radiogroup" aria-label="เพศ">
+            <input id="genderMale" name="gender" value="ชาย" type="radio">
+            <label for="genderMale">ชาย</label>
+            <input id="genderFemale" name="gender" value="หญิง" type="radio">
+            <label for="genderFemale">หญิง</label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="participantAge">อายุ (ปี)</label>
+          <input id="participantAge" type="number" min="1" max="120" inputmode="numeric" placeholder="ระบุอายุ">
+        </div>
+        <div class="field">
+          <label>ครั้งที่ประเมิน</label>
+          <div class="segment" role="radiogroup" aria-label="ครั้งที่ประเมิน">
+            <input id="phasePre" name="phase" value="ก่อนดำเนินการ" type="radio">
+            <label for="phasePre">ก่อนดำเนินการ</label>
+            <input id="phasePost" name="phase" value="หลังดำเนินการ" type="radio">
+            <label for="phasePost">หลังดำเนินการ</label>
+          </div>
+        </div>
+
+        <form id="surveyForm"></form>
+      </section>
+
+      <section class="panel" id="adminPanel">
+        <div class="notice">
+          สำหรับการบันทึกลง Google Sheet ให้ deploy ไฟล์ <b>apps-script.gs</b> เป็น Web App แล้วนำ URL มาวางในช่องตั้งค่า Endpoint ด้านล่าง
+        </div>
+        <div id="adminLogin">
+          <div class="field">
+            <label for="adminPass">รหัสผู้ดูแล</label>
+            <input id="adminPass" type="password" inputmode="numeric" placeholder="ค่าเริ่มต้น 2468">
+          </div>
+          <button class="btn" id="loginBtn" type="button" style="width:100%">เข้าสู่ Dashboard</button>
+        </div>
+        <div id="adminContent" class="hidden">
+          <div class="admin-grid">
+            <div class="stat"><b id="statCount">0</b><span>จำนวนแบบประเมิน</span></div>
+            <div class="stat"><b id="statAvg">0.00</b><span>ค่าเฉลี่ยรวม</span></div>
+            <div class="stat"><b id="statHigh">0</b><span>ระดับสูงขึ้นไป</span></div>
+            <div class="stat"><b id="statLast">-</b><span>รายการล่าสุด</span></div>
+          </div>
+          <div class="section-title">การวิเคราะห์ข้อมูลเชิงพรรณนา</div>
+          <div class="analysis-card">
+            <p class="summary-text" id="descriptiveSummary">ยังไม่มีข้อมูลสำหรับวิเคราะห์</p>
+          </div>
+          <div class="table-wrap" style="margin-bottom:12px">
+            <table>
+              <thead>
+                <tr>
+                  <th>ตัวชี้วัด</th>
+                  <th>ค่า</th>
+                </tr>
+              </thead>
+              <tbody id="descriptiveRows"></tbody>
+            </table>
+          </div>
+          <div class="section-title">ประมวลผลรายด้าน</div>
+          <div class="table-wrap" style="margin-bottom:12px">
+            <table>
+              <thead>
+                <tr>
+                  <th>รายด้าน</th>
+                  <th>ข้อ</th>
+                  <th>ก่อน (Mean±SD)</th>
+                  <th>หลัง (Mean±SD)</th>
+                  <th>ผลต่าง</th>
+                  <th>ระดับล่าสุด</th>
+                  <th>คำแนะนำ AI</th>
+                </tr>
+              </thead>
+              <tbody id="dimensionRows"></tbody>
+            </table>
+          </div>
+          <div class="section-title">การแจกแจงระดับผลประเมิน</div>
+          <div class="analysis-card">
+            <div class="bar-list" id="levelBars"></div>
+          </div>
+          <div class="field">
+            <label for="scriptUrl">Google Apps Script Web App URL</label>
+            <input id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+          </div>
+          <button class="btn secondary" id="saveSettings" type="button" style="width:100%;margin-bottom:10px">บันทึกการตั้งค่า</button>
+          <div class="small-actions no-print">
+            <button class="btn" id="syncBtn" type="button">ดึงข้อมูล</button>
+            <button class="btn secondary" id="exportBtn" type="button">ส่งออก CSV</button>
+            <button class="btn secondary" id="printBtn" type="button">พิมพ์ PDF</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>วันที่</th>
+                  <th>ครั้ง</th>
+                  <th>เพศ</th>
+                  <th>อายุ</th>
+                  <th>คะแนน</th>
+                  <th>เฉลี่ย</th>
+                  <th>ระดับ</th>
+                </tr>
+              </thead>
+              <tbody id="resultRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="action-row" id="surveyActions">
+      <button class="btn secondary" id="resetBtn" type="button">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7v6h6M20 17a8 8 0 0 1-13.7-5.6L4 13m16 4v-6h-6m3.7 1.6A8 8 0 0 0 4 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ล้าง
+      </button>
+      <button class="btn" id="submitBtn" type="button">
+        <span class="submit-icon" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="submit-text">บันทึก</span>
+      </button>
+    </div>
+
+    <aside class="drawer" id="drawer" aria-hidden="true">
+      <div class="shade" id="closeShade"></div>
+      <nav class="menu" aria-label="เมนูหลัก">
+        <div class="menu-head">
+          <h2>เมนู</h2>
+          <button class="icon-btn" id="closeMenu" title="ปิด" aria-label="ปิด">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="menu-list">
+          <button class="menu-item" data-view="survey">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 11h6M9 15h6M8 3h8l2 3v15H6V6l2-3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            แบบประเมิน
+          </button>
+          <button class="menu-item" data-view="admin">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V5m5 14v-8m5 8V8m5 11V4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+            Admin Dashboard
+          </button>
+          <button class="menu-item" id="quickPrint">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 8V4h10v4M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7v-7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            รายงาน / พิมพ์ PDF
+          </button>
+        </div>
+      </nav>
+    </aside>
+  </div>
+
+  <script>
+    const SHEET_ID = "1VeO64vU8JLX7rK1SrgD45hEVfQ4A0UnOATIlgJxJ8DA";
+    const questions = [
+      "รู้ค่าความดันโลหิตของตนเอง",
+      "รู้ระดับน้ำตาลในเลือดของตนเอง",
+      "รู้ค่า BMI ของตนเอง",
+      "รู้ความหมายของผลตรวจสุขภาพ",
+      "สามารถบอกความเสี่ยงสุขภาพของตนเองได้",
+      "รู้วิธีป้องกันโรคเบาหวานและความดันโลหิตสูง",
+      "สามารถเลือกอาหารที่เหมาะสมได้",
+      "สามารถวางแผนการออกกำลังกายได้",
+      "สามารถติดตามสุขภาพตนเองอย่างต่อเนื่อง",
+      "มีความมั่นใจในการจัดการสุขภาพตนเอง"
+    ];
+
+    const dimensions = [
+      { name: "ความรู้ค่าผลสุขภาพส่วนบุคคล", items: [0, 1, 2, 3, 4] },
+      { name: "การป้องกันและพฤติกรรมสุขภาพ", items: [5, 6, 7] },
+      { name: "การติดตามและจัดการสุขภาพตนเอง", items: [8, 9] }
+    ];
+
+    const levelOrder = ["สูงมาก", "สูง", "ปานกลาง", "ต่ำ", "ต่ำมาก"];
+
+    const els = {
+      form: document.querySelector("#surveyForm"),
+      scoreNow: document.querySelector("#scoreNow"),
+      avgNow: document.querySelector("#avgNow"),
+      levelNow: document.querySelector("#levelNow"),
+      answeredCount: document.querySelector("#answeredCount"),
+      progressBar: document.querySelector("#progressBar"),
+      drawer: document.querySelector("#drawer"),
+      surveyPanel: document.querySelector("#surveyPanel"),
+      adminPanel: document.querySelector("#adminPanel"),
+      surveyActions: document.querySelector("#surveyActions"),
+      screenTitle: document.querySelector("#screenTitle"),
+      resultRows: document.querySelector("#resultRows"),
+      descriptiveSummary: document.querySelector("#descriptiveSummary"),
+      descriptiveRows: document.querySelector("#descriptiveRows"),
+      dimensionRows: document.querySelector("#dimensionRows"),
+      levelBars: document.querySelector("#levelBars"),
+      scriptUrl: document.querySelector("#scriptUrl")
+    };
+
+    let results = JSON.parse(localStorage.getItem("healthLiteracyResults") || "[]");
+    let settings = JSON.parse(localStorage.getItem("healthLiteracySettings") || "{}");
+    let isSaving = false;
+    els.scriptUrl.value = settings.scriptUrl || "";
+
+    function levelFromAverage(avg) {
+      if (avg >= 4.51) return "สูงมาก";
+      if (avg >= 3.51) return "สูง";
+      if (avg >= 2.51) return "ปานกลาง";
+      if (avg >= 1.51) return "ต่ำ";
+      if (avg >= 1) return "ต่ำมาก";
+      return "ยังไม่ครบทุกข้อ";
+    }
+
+    function renderQuestions() {
+      els.form.innerHTML = questions.map((text, index) => {
+        const name = `q${index + 1}`;
+        return `
+          <div class="question">
+            <div class="q-title"><span class="q-no">${index + 1}</span><span>${text}</span></div>
+            <div class="scale" role="radiogroup" aria-label="${text}">
+              ${[1,2,3,4,5].map(value => `
+                <input id="${name}_${value}" name="${name}" value="${value}" type="radio">
+                <label for="${name}_${value}">${value}</label>
+              `).join("")}
+            </div>
+            <div class="scale-caption"><span>น้อยที่สุด</span><span>มากที่สุด</span></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function readAnswers() {
+      return questions.map((_, i) => {
+        const checked = document.querySelector(`input[name="q${i + 1}"]:checked`);
+        return checked ? Number(checked.value) : 0;
+      });
+    }
+
+    function updateScore() {
+      const answers = readAnswers();
+      const answered = answers.filter(Boolean).length;
+      const score = answers.reduce((sum, value) => sum + value, 0);
+      const avg = answered ? score / answered : 0;
+      els.scoreNow.textContent = score;
+      els.avgNow.textContent = avg.toFixed(2);
+      els.answeredCount.textContent = `ตอบแล้ว ${answered}/10`;
+      els.levelNow.textContent = answered === 10 ? levelFromAverage(score / 10) : "ยังไม่ครบทุกข้อ";
+      els.progressBar.style.width = `${answered * 10}%`;
+    }
+
+    function setView(view) {
+      const isAdmin = view === "admin";
+      els.surveyPanel.classList.toggle("active", !isAdmin);
+      els.adminPanel.classList.toggle("active", isAdmin);
+      els.surveyActions.classList.toggle("hidden", isAdmin);
+      els.screenTitle.textContent = isAdmin ? "Admin Dashboard" : "ประเมินความรอบรู้ด้านสุขภาพ";
+      closeDrawer();
+      if (isAdmin) renderDashboard();
+    }
+
+    function openDrawer() {
+      els.drawer.classList.add("open");
+      els.drawer.setAttribute("aria-hidden", "false");
+    }
+
+    function closeDrawer() {
+      els.drawer.classList.remove("open");
+      els.drawer.setAttribute("aria-hidden", "true");
+    }
+
+    function saveLocal(item) {
+      results.unshift(item);
+      localStorage.setItem("healthLiteracyResults", JSON.stringify(results));
+    }
+
+    async function saveRemote(item) {
+      if (!settings.scriptUrl) return { skipped: true };
+      const response = await fetch(settings.scriptUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "create", sheetId: SHEET_ID, item })
+      });
+      return response;
+    }
+
+    function setSavingState(saving) {
+      isSaving = saving;
+      const submitBtn = document.querySelector("#submitBtn");
+      const submitIcon = submitBtn.querySelector(".submit-icon");
+      const submitText = submitBtn.querySelector(".submit-text");
+      submitBtn.disabled = saving;
+      submitIcon.innerHTML = saving
+        ? `<span class="spinner"></span>`
+        : `<svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      submitText.textContent = saving ? "กำลังบันทึก..." : "บันทึก";
+    }
+
+    async function loadRemote() {
+      if (!settings.scriptUrl) return;
+      const data = await jsonp(`${settings.scriptUrl}?action=list&sheetId=${encodeURIComponent(SHEET_ID)}`);
+      if (Array.isArray(data.items)) {
+        results = data.items.concat(results).filter((item, index, arr) => {
+          const key = `${item.timestamp}-${normalizePhase(item)}-${item.gender}-${item.age}-${item.score}`;
+          return arr.findIndex(other => `${other.timestamp}-${normalizePhase(other)}-${other.gender}-${other.age}-${other.score}` === key) === index;
+        });
+        localStorage.setItem("healthLiteracyResults", JSON.stringify(results));
+      }
+    }
+
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const callbackName = `healthLiteracyCallback_${Date.now()}_${Math.round(Math.random() * 10000)}`;
+        const script = document.createElement("script");
+        const separator = url.includes("?") ? "&" : "?";
+        window[callbackName] = data => {
+          delete window[callbackName];
+          script.remove();
+          resolve(data);
+        };
+        script.onerror = () => {
+          delete window[callbackName];
+          script.remove();
+          reject(new Error("ไม่สามารถเชื่อมต่อ Google Apps Script ได้"));
+        };
+        script.src = `${url}${separator}callback=${callbackName}`;
+        document.body.appendChild(script);
+      });
+    }
+
+    async function submitSurvey() {
+      if (isSaving) return;
+      const answers = readAnswers();
+      if (answers.some(value => value === 0)) {
+        alert("กรุณาตอบให้ครบทั้ง 10 ข้อ");
+        return;
+      }
+      const gender = document.querySelector("input[name='gender']:checked")?.value || "";
+      if (!gender) {
+        alert("กรุณาเลือกเพศ");
+        return;
+      }
+      const age = Number(document.querySelector("#participantAge").value);
+      if (!Number.isInteger(age) || age < 1 || age > 120) {
+        alert("กรุณาระบุอายุเป็นตัวเลข 1-120 ปี");
+        return;
+      }
+      const phase = document.querySelector("input[name='phase']:checked")?.value || "";
+      if (!phase) {
+        alert("กรุณาเลือกครั้งที่ประเมิน");
+        return;
+      }
+      const score = answers.reduce((sum, value) => sum + value, 0);
+      const average = score / 10;
+      const item = {
+        timestamp: new Date().toISOString(),
+        phase,
+        gender,
+        age,
+        score,
+        average: Number(average.toFixed(2)),
+        level: levelFromAverage(average),
+        answers
+      };
+      setSavingState(true);
+      try {
+        saveLocal(item);
+        await saveRemote(item);
+        alert(`บันทึกสำเร็จ\nคะแนน ${score}/50\nระดับ ${item.level}`);
+        document.querySelector("#surveyForm").reset();
+        document.querySelectorAll("input[name='gender']").forEach(input => input.checked = false);
+        document.querySelectorAll("input[name='phase']").forEach(input => input.checked = false);
+        document.querySelector("#participantAge").value = "";
+        updateScore();
+      } catch (error) {
+        alert(`บันทึกในเครื่องแล้ว แต่ยังส่ง Google Sheet ไม่สำเร็จ\n${error.message}`);
+      } finally {
+        setSavingState(false);
+      }
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      return new Intl.DateTimeFormat("th-TH", {
+        dateStyle: "short",
+        timeStyle: "short"
+      }).format(new Date(value));
+    }
+
+    function mean(values) {
+      const nums = values.map(Number).filter(Number.isFinite);
+      return nums.length ? nums.reduce((sum, value) => sum + value, 0) / nums.length : 0;
+    }
+
+    function standardDeviation(values) {
+      const nums = values.map(Number).filter(Number.isFinite);
+      if (nums.length <= 1) return 0;
+      const avg = mean(nums);
+      const variance = nums.reduce((sum, value) => sum + Math.pow(value - avg, 2), 0) / (nums.length - 1);
+      return Math.sqrt(variance);
+    }
+
+    function minMax(values) {
+      const nums = values.map(Number).filter(Number.isFinite);
+      return nums.length ? { min: Math.min(...nums), max: Math.max(...nums) } : { min: 0, max: 0 };
+    }
+
+    function formatNumber(value) {
+      return Number(value || 0).toFixed(2);
+    }
+
+    function getAnswerValues(item) {
+      return Array.isArray(item.answers) ? item.answers.map(Number) : [];
+    }
+
+    function normalizePhase(item) {
+      const value = String(item.phase || "").trim();
+      if (value.includes("หลัง") || value.toLowerCase() === "post") return "หลังดำเนินการ";
+      if (value.includes("ก่อน") || value.toLowerCase() === "pre") return "ก่อนดำเนินการ";
+      return "ไม่ระบุครั้ง";
+    }
+
+    function phaseResults(phase) {
+      return results.filter(item => normalizePhase(item) === phase);
+    }
+
+    function dimensionAverages(sourceResults, dimension) {
+      return sourceResults.map(item => {
+        const answers = getAnswerValues(item);
+        const values = dimension.items.map(index => answers[index]).filter(value => Number.isFinite(value) && value >= 1 && value <= 5);
+        return values.length === dimension.items.length ? mean(values) : null;
+      }).filter(Number.isFinite);
+    }
+
+    function aiRecommendation(dimensionName, avg, diff) {
+      const level = levelFromAverage(avg);
+      const trend = diff > 0.2 ? "เพิ่มขึ้นชัดเจน" : diff < -0.2 ? "ลดลง" : "เปลี่ยนแปลงเล็กน้อย";
+      if (avg >= 4.51) {
+        return `คงระดับผลลัพธ์ไว้โดยจัดกิจกรรมทบทวนเป็นระยะ และใช้ผู้ที่มีคะแนนสูงเป็นต้นแบบแลกเปลี่ยนเรียนรู้ เนื่องจากด้าน${dimensionName}อยู่ในระดับสูงมากและมีแนวโน้ม${trend}`;
+      }
+      if (avg >= 3.51) {
+        return `ควรเสริมกิจกรรมฝึกปฏิบัติรายบุคคลและติดตามซ้ำ เพื่อยกระดับจากสูงไปสู่สูงมาก โดยเฉพาะประเด็นในด้าน${dimensionName}ที่ยังตอบไม่มั่นใจ`;
+      }
+      if (avg >= 2.51) {
+        return `ควรจัด intervention เฉพาะด้าน เช่น สื่อสั้น การสาธิต และแบบฝึกตัดสินใจในสถานการณ์จริง เพราะด้าน${dimensionName}อยู่ระดับปานกลาง เหมาะกับการพัฒนาแบบเข้มข้นก่อนวัดหลังดำเนินการ`;
+      }
+      if (avg >= 1.51) {
+        return `ควรเร่งพัฒนาโดยใช้การให้คำปรึกษารายกลุ่มย่อย แผนติดตามรายสัปดาห์ และตรวจสอบความเข้าใจซ้ำ เนื่องจากด้าน${dimensionName}อยู่ในระดับต่ำ`;
+      }
+      if (avg >= 1) {
+        return `ควรเริ่มจากการให้ความรู้พื้นฐานแบบตัวต่อตัว ใช้ภาษาง่าย ภาพประกอบ และกิจกรรมทดลองทำจริง เพราะด้าน${dimensionName}อยู่ในระดับต่ำมาก`;
+      }
+      return "ยังไม่มีข้อมูลเพียงพอสำหรับให้คำแนะนำ";
+    }
+
+    function renderAnalytics() {
+      const count = results.length;
+      const averages = results.map(item => Number(item.average)).filter(Number.isFinite);
+      const scores = results.map(item => Number(item.score)).filter(Number.isFinite);
+      const ages = results.map(item => Number(item.age)).filter(Number.isFinite);
+      const maleCount = results.filter(item => (item.gender || item.name) === "ชาย").length;
+      const femaleCount = results.filter(item => (item.gender || item.name) === "หญิง").length;
+      const preResults = phaseResults("ก่อนดำเนินการ");
+      const postResults = phaseResults("หลังดำเนินการ");
+      const preAvg = mean(preResults.map(item => Number(item.average)).filter(Number.isFinite));
+      const postAvg = mean(postResults.map(item => Number(item.average)).filter(Number.isFinite));
+      const preLevel = preResults.length ? levelFromAverage(preAvg) : "-";
+      const postLevel = postResults.length ? levelFromAverage(postAvg) : "-";
+      const change = postResults.length && preResults.length ? postAvg - preAvg : 0;
+      const avg = mean(averages);
+      const sd = standardDeviation(averages);
+      const scoreRange = minMax(scores);
+      const ageRange = minMax(ages);
+      const mainLevel = count ? levelFromAverage(avg) : "-";
+
+      els.descriptiveSummary.textContent = count
+        ? `จากข้อมูลทั้งหมด ${count} ราย ค่าเฉลี่ยความรอบรู้ด้านสุขภาพเท่ากับ ${formatNumber(avg)} อยู่ในระดับ${mainLevel} โดยมีส่วนเบี่ยงเบนมาตรฐาน ${formatNumber(sd)}${preResults.length && postResults.length ? ` การเปรียบเทียบก่อนและหลังดำเนินการพบว่าค่าเฉลี่ย${change >= 0 ? "เพิ่มขึ้น" : "ลดลง"} ${formatNumber(Math.abs(change))} คะแนน` : " หากบันทึกข้อมูลครบทั้งก่อนและหลังดำเนินการ ระบบจะแสดงผลต่างค่าเฉลี่ยเพื่อใช้ประกอบรายงานวิจัย"}`
+        : "ยังไม่มีข้อมูลสำหรับวิเคราะห์";
+
+      els.descriptiveRows.innerHTML = count ? `
+        <tr><td>จำนวนแบบประเมิน</td><td>${count} ราย</td></tr>
+        <tr><td>ก่อนดำเนินการ</td><td>${preResults.length} ราย, ค่าเฉลี่ย ${formatNumber(preAvg)} (${preLevel})</td></tr>
+        <tr><td>หลังดำเนินการ</td><td>${postResults.length} ราย, ค่าเฉลี่ย ${formatNumber(postAvg)} (${postLevel})</td></tr>
+        <tr><td>ผลต่างค่าเฉลี่ยหลัง-ก่อน</td><td>${preResults.length && postResults.length ? formatNumber(change) : "-"} คะแนน</td></tr>
+        <tr><td>ค่าเฉลี่ยรวม</td><td>${formatNumber(avg)} (${mainLevel})</td></tr>
+        <tr><td>ส่วนเบี่ยงเบนมาตรฐาน (SD)</td><td>${formatNumber(sd)}</td></tr>
+        <tr><td>คะแนนต่ำสุด-สูงสุด</td><td>${scoreRange.min}-${scoreRange.max} คะแนน</td></tr>
+        <tr><td>เพศชาย</td><td>${maleCount} ราย (${count ? ((maleCount / count) * 100).toFixed(0) : 0}%)</td></tr>
+        <tr><td>เพศหญิง</td><td>${femaleCount} ราย (${count ? ((femaleCount / count) * 100).toFixed(0) : 0}%)</td></tr>
+        <tr><td>อายุเฉลี่ย</td><td>${ages.length ? formatNumber(mean(ages)) : "-"} ปี</td></tr>
+        <tr><td>ช่วงอายุ</td><td>${ages.length ? `${ageRange.min}-${ageRange.max} ปี` : "-"}</td></tr>
+      ` : `<tr><td colspan="2">ยังไม่มีข้อมูล</td></tr>`;
+
+      els.dimensionRows.innerHTML = dimensions.map(dimension => {
+        const preValues = dimensionAverages(preResults, dimension);
+        const postValues = dimensionAverages(postResults, dimension);
+        const fallbackValues = dimensionAverages(results, dimension);
+        const preDimensionAvg = mean(preValues);
+        const postDimensionAvg = mean(postValues);
+        const preDimensionSd = standardDeviation(preValues);
+        const postDimensionSd = standardDeviation(postValues);
+        const latestAvg = postValues.length ? postDimensionAvg : mean(fallbackValues);
+        const diff = preValues.length && postValues.length ? postDimensionAvg - preDimensionAvg : 0;
+        const itemText = dimension.items.map(index => index + 1).join(", ");
+        return `
+          <tr>
+            <td>${escapeHtml(dimension.name)}</td>
+            <td>${itemText}</td>
+            <td>${preValues.length ? `${formatNumber(preDimensionAvg)} ± ${formatNumber(preDimensionSd)}` : "-"}</td>
+            <td>${postValues.length ? `${formatNumber(postDimensionAvg)} ± ${formatNumber(postDimensionSd)}` : "-"}</td>
+            <td>${preValues.length && postValues.length ? formatNumber(diff) : "-"}</td>
+            <td>${fallbackValues.length ? levelFromAverage(latestAvg) : "-"}</td>
+            <td class="advice-cell">${escapeHtml(aiRecommendation(dimension.name, latestAvg, diff))}</td>
+          </tr>
+        `;
+      }).join("");
+
+      els.levelBars.innerHTML = levelOrder.map(level => {
+        const total = results.filter(item => (item.level || levelFromAverage(Number(item.average))) === level).length;
+        const percent = count ? (total / count) * 100 : 0;
+        return `
+          <div class="bar-item">
+            <span>${level}</span>
+            <div class="mini-bar"><span style="width:${percent}%"></span></div>
+            <b>${total} (${percent.toFixed(0)}%)</b>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderDashboard() {
+      const count = results.length;
+      const avg = count ? results.reduce((sum, item) => sum + Number(item.average || 0), 0) / count : 0;
+      const high = results.filter(item => Number(item.average) >= 3.51).length;
+      document.querySelector("#statCount").textContent = count;
+      document.querySelector("#statAvg").textContent = avg.toFixed(2);
+      document.querySelector("#statHigh").textContent = high;
+      document.querySelector("#statLast").textContent = count ? formatDate(results[0].timestamp) : "-";
+      els.resultRows.innerHTML = results.map(item => `
+        <tr>
+          <td>${formatDate(item.timestamp)}</td>
+          <td>${escapeHtml(normalizePhase(item))}</td>
+          <td>${escapeHtml(item.gender || item.name || "")}</td>
+          <td>${escapeHtml(item.age || "")}</td>
+          <td>${item.score || 0}/50</td>
+          <td>${Number(item.average || 0).toFixed(2)}</td>
+          <td>${escapeHtml(item.level || "")}</td>
+        </tr>
+      `).join("") || `<tr><td colspan="7">ยังไม่มีข้อมูล</td></tr>`;
+      renderAnalytics();
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function normalizeDigits(value) {
+      const thaiDigits = "๐๑๒๓๔๕๖๗๘๙";
+      return String(value).trim().replace(/[๐-๙]/g, digit => thaiDigits.indexOf(digit));
+    }
+
+    function exportCsv() {
+      const header = ["timestamp","phase","gender","age","score","average","level",...questions.map((_, i) => `q${i + 1}`)];
+      const rows = results.map(item => [
+        item.timestamp, normalizePhase(item), item.gender || item.name || "", item.age || "", item.score, item.average, item.level, ...(item.answers || [])
+      ]);
+      const csv = [header, ...rows].map(row => row.map(cell => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `health-literacy-report-${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    renderQuestions();
+    updateScore();
+    renderDashboard();
+
+    document.addEventListener("change", event => {
+      if (event.target.matches("input[type='radio']")) updateScore();
+    });
+    document.querySelector("#openMenu").addEventListener("click", openDrawer);
+    document.querySelector("#closeMenu").addEventListener("click", closeDrawer);
+    document.querySelector("#closeShade").addEventListener("click", closeDrawer);
+    document.querySelectorAll("[data-view]").forEach(button => {
+      button.addEventListener("click", () => setView(button.dataset.view));
+    });
+    document.querySelector("#submitBtn").addEventListener("click", submitSurvey);
+    document.querySelector("#resetBtn").addEventListener("click", () => {
+      document.querySelector("#surveyForm").reset();
+      document.querySelectorAll("input[name='gender']").forEach(input => input.checked = false);
+      document.querySelectorAll("input[name='phase']").forEach(input => input.checked = false);
+      document.querySelector("#participantAge").value = "";
+      updateScore();
+    });
+    document.querySelector("#loginBtn").addEventListener("click", () => {
+      if (normalizeDigits(document.querySelector("#adminPass").value) !== "2468") {
+        alert("รหัสผู้ดูแลไม่ถูกต้อง");
+        return;
+      }
+      document.querySelector("#adminLogin").classList.add("hidden");
+      document.querySelector("#adminContent").classList.remove("hidden");
+      renderDashboard();
+    });
+    document.querySelector("#saveSettings").addEventListener("click", () => {
+      settings.scriptUrl = els.scriptUrl.value.trim();
+      localStorage.setItem("healthLiteracySettings", JSON.stringify(settings));
+      alert("บันทึกการตั้งค่าแล้ว");
+    });
+    document.querySelector("#syncBtn").addEventListener("click", async () => {
+      try {
+        await loadRemote();
+        renderDashboard();
+        alert("ดึงข้อมูลแล้ว");
+      } catch (error) {
+        alert(`ดึงข้อมูลไม่สำเร็จ: ${error.message}`);
+      }
+    });
+    document.querySelector("#exportBtn").addEventListener("click", exportCsv);
+    document.querySelector("#printBtn").addEventListener("click", () => {
+      els.adminPanel.classList.add("printing");
+      window.print();
+      els.adminPanel.classList.remove("printing");
+    });
+    document.querySelector("#quickPrint").addEventListener("click", () => {
+      setView("admin");
+      setTimeout(() => window.print(), 120);
+    });
+  </script>
+</body>
+</html>
