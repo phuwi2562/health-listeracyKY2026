@@ -647,7 +647,7 @@
 
     .small-actions {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin: 12px 0;
     }
@@ -853,7 +853,8 @@
           </div>
           <button class="btn secondary" id="saveSettings" type="button" style="width:100%;margin-bottom:10px">บันทึกการตั้งค่า</button>
           <div class="small-actions no-print">
-            <button class="btn" id="syncBtn" type="button">ดึงข้อมูล</button>
+            <button class="btn" id="syncBtn" type="button">ซิงก์จาก Sheet</button>
+            <button class="btn secondary" id="clearLocalBtn" type="button">ล้าง Local</button>
             <button class="btn secondary" id="exportBtn" type="button">ส่งออก CSV</button>
             <button class="btn secondary" id="printBtn" type="button">พิมพ์ PDF</button>
           </div>
@@ -1096,7 +1097,7 @@
       if (!settings.scriptUrl) return;
       const data = await jsonp(`${settings.scriptUrl}?action=list&sheetId=${encodeURIComponent(SHEET_ID)}`);
       if (Array.isArray(data.items)) {
-        results = data.items.concat(results).filter((item, index, arr) => {
+        results = data.items.filter((item, index, arr) => {
           const key = `${item.timestamp}-${normalizePhase(item)}-${normalizeVillage(item)}-${item.gender}-${item.age}-${item.score}`;
           return arr.findIndex(other => `${other.timestamp}-${normalizePhase(other)}-${normalizeVillage(other)}-${other.gender}-${other.age}-${other.score}` === key) === index;
         });
@@ -1470,10 +1471,16 @@
       try {
         await loadRemote();
         renderDashboard();
-        alert("ดึงข้อมูลแล้ว");
+        alert("ซิงก์ข้อมูลจาก Google Sheet แล้ว\nข้อมูลในเครื่องที่ไม่ได้อยู่ใน Google Sheet ถูกล้างออกแล้ว");
       } catch (error) {
         alert(`ดึงข้อมูลไม่สำเร็จ: ${error.message}`);
       }
+    });
+    document.querySelector("#clearLocalBtn").addEventListener("click", () => {
+      results = [];
+      localStorage.setItem("healthLiteracyResults", JSON.stringify(results));
+      renderDashboard();
+      alert("ล้างข้อมูลในเครื่องแล้ว\nข้อมูลใน Google Sheet ยังอยู่เหมือนเดิม");
     });
     document.querySelector("#exportBtn").addEventListener("click", exportCsv);
     document.querySelector("#printBtn").addEventListener("click", () => {
