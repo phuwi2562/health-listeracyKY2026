@@ -229,13 +229,18 @@
       margin-bottom: 7px;
     }
 
-    .field input, .field textarea {
+    .field input, .field textarea, .field select {
       width: 100%;
       border: 0;
       outline: 0;
       color: var(--ink);
       background: transparent;
       font-size: 16px;
+    }
+
+    .field select {
+      appearance: none;
+      min-height: 30px;
     }
 
     .segment {
@@ -505,6 +510,41 @@
       box-shadow: 0 8px 18px rgba(31, 54, 78, .05);
     }
 
+    .village-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .village-card {
+      background: linear-gradient(180deg, #ffffff, #f6fbfa);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: 0 8px 18px rgba(31, 54, 78, .05);
+    }
+
+    .village-card strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .village-card b {
+      display: block;
+      font-size: 24px;
+      line-height: 1.05;
+      color: var(--teal-dark);
+    }
+
+    .village-card span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .summary-text {
       margin: 0;
       color: var(--muted);
@@ -602,6 +642,7 @@
       .hero { grid-template-columns: 1fr; }
       .visual { min-height: 118px; }
       .small-actions { grid-template-columns: 1fr; }
+      .village-grid { grid-template-columns: 1fr; }
     }
 
     @media print {
@@ -628,8 +669,8 @@
             </svg>
           </div>
           <div>
-            <h1 id="screenTitle">ประเมินความรอบรู้ด้านสุขภาพ</h1>
-            <div class="subtitle">10 ข้อ • Likert Scale 5 ระดับ • 50 คะแนน</div>
+            <h1 id="screenTitle">การประเมินความรอบรู้ด้านสุขภาพ ตำบลคำใหญ่ก่อนและหลัง การดำเนินงาน สถานีสุขภาพ</h1>
+            <div class="subtitle">ตำบลคำใหญ่ • 12 หมู่บ้าน • ก่อนและหลังดำเนินงาน</div>
           </div>
         </div>
         <button class="icon-btn" id="openMenu" title="เมนู" aria-label="เมนู">
@@ -686,6 +727,12 @@
         <div class="field">
           <label for="participantAge">อายุ (ปี)</label>
           <input id="participantAge" type="number" min="1" max="120" inputmode="numeric" placeholder="ระบุอายุ">
+        </div>
+        <div class="field">
+          <label for="participantVillage">หมู่บ้านในตำบลคำใหญ่</label>
+          <select id="participantVillage">
+            <option value="">เลือกหมู่บ้าน</option>
+          </select>
         </div>
         <div class="field">
           <label>ครั้งที่ประเมิน</label>
@@ -754,6 +801,24 @@
           <div class="analysis-card">
             <div class="bar-list" id="levelBars"></div>
           </div>
+          <div class="section-title">Dashboard แยกรายหมู่บ้าน</div>
+          <div class="village-grid" id="villageCards"></div>
+          <div class="table-wrap" style="margin-bottom:12px">
+            <table>
+              <thead>
+                <tr>
+                  <th>หมู่บ้าน</th>
+                  <th>จำนวน</th>
+                  <th>ก่อน</th>
+                  <th>หลัง</th>
+                  <th>ผลต่าง</th>
+                  <th>เฉลี่ยรวม</th>
+                  <th>ระดับ</th>
+                </tr>
+              </thead>
+              <tbody id="villageRows"></tbody>
+            </table>
+          </div>
           <div class="field">
             <label for="scriptUrl">Google Apps Script Web App URL</label>
             <input id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
@@ -770,6 +835,7 @@
                 <tr>
                   <th>วันที่</th>
                   <th>ครั้ง</th>
+                  <th>หมู่บ้าน</th>
                   <th>เพศ</th>
                   <th>อายุ</th>
                   <th>คะแนน</th>
@@ -845,6 +911,21 @@
       { name: "การติดตามและจัดการสุขภาพตนเอง", items: [8, 9] }
     ];
 
+    const villages = [
+      { id: "1", name: "หมู่ 1 บ้านหัวสนาม" },
+      { id: "2", name: "หมู่ 2 บ้านคำเจริญ" },
+      { id: "3", name: "หมู่ 3 บ้านชัยศรี" },
+      { id: "4", name: "หมู่ 4 บ้านนาดี" },
+      { id: "5", name: "หมู่ 5 บ้านห้วยยาง" },
+      { id: "6", name: "หมู่ 6 บ้านห้วยม่วง" },
+      { id: "7", name: "หมู่ 7 บ้านคำใหญ่" },
+      { id: "8", name: "หมู่ 8 บ้านคำถาวร" },
+      { id: "9", name: "หมู่ 9 บ้านโพธิ์ทอง" },
+      { id: "10", name: "หมู่ 10 บ้านโคกป่ากุง" },
+      { id: "11", name: "หมู่ 11 บ้านคำใหญ่" },
+      { id: "12", name: "หมู่ 12 บ้านคำเจริญ" }
+    ];
+
     const levelOrder = ["สูงมาก", "สูง", "ปานกลาง", "ต่ำ", "ต่ำมาก"];
 
     const els = {
@@ -864,6 +945,8 @@
       descriptiveRows: document.querySelector("#descriptiveRows"),
       dimensionRows: document.querySelector("#dimensionRows"),
       levelBars: document.querySelector("#levelBars"),
+      villageCards: document.querySelector("#villageCards"),
+      villageRows: document.querySelector("#villageRows"),
       scriptUrl: document.querySelector("#scriptUrl")
     };
 
@@ -897,6 +980,13 @@
           </div>
         `;
       }).join("");
+    }
+
+    function renderVillageOptions() {
+      const select = document.querySelector("#participantVillage");
+      select.innerHTML = `<option value="">เลือกหมู่บ้าน</option>` + villages.map(village =>
+        `<option value="${village.name}">${village.name}</option>`
+      ).join("");
     }
 
     function readAnswers() {
@@ -971,8 +1061,8 @@
       const data = await jsonp(`${settings.scriptUrl}?action=list&sheetId=${encodeURIComponent(SHEET_ID)}`);
       if (Array.isArray(data.items)) {
         results = data.items.concat(results).filter((item, index, arr) => {
-          const key = `${item.timestamp}-${normalizePhase(item)}-${item.gender}-${item.age}-${item.score}`;
-          return arr.findIndex(other => `${other.timestamp}-${normalizePhase(other)}-${other.gender}-${other.age}-${other.score}` === key) === index;
+          const key = `${item.timestamp}-${normalizePhase(item)}-${normalizeVillage(item)}-${item.gender}-${item.age}-${item.score}`;
+          return arr.findIndex(other => `${other.timestamp}-${normalizePhase(other)}-${normalizeVillage(other)}-${other.gender}-${other.age}-${other.score}` === key) === index;
         });
         localStorage.setItem("healthLiteracyResults", JSON.stringify(results));
       }
@@ -1015,6 +1105,11 @@
         alert("กรุณาระบุอายุเป็นตัวเลข 1-120 ปี");
         return;
       }
+      const village = document.querySelector("#participantVillage").value;
+      if (!village) {
+        alert("กรุณาเลือกหมู่บ้าน");
+        return;
+      }
       const phase = document.querySelector("input[name='phase']:checked")?.value || "";
       if (!phase) {
         alert("กรุณาเลือกครั้งที่ประเมิน");
@@ -1025,6 +1120,7 @@
       const item = {
         timestamp: new Date().toISOString(),
         phase,
+        village,
         gender,
         age,
         score,
@@ -1040,6 +1136,7 @@
         document.querySelector("#surveyForm").reset();
         document.querySelectorAll("input[name='gender']").forEach(input => input.checked = false);
         document.querySelectorAll("input[name='phase']").forEach(input => input.checked = false);
+        document.querySelector("#participantVillage").value = "";
         document.querySelector("#participantAge").value = "";
         updateScore();
       } catch (error) {
@@ -1092,6 +1189,13 @@
 
     function phaseResults(phase) {
       return results.filter(item => normalizePhase(item) === phase);
+    }
+
+    function normalizeVillage(item) {
+      const value = String(item.village || "").trim();
+      if (!value) return "ไม่ระบุหมู่บ้าน";
+      const found = villages.find(village => value === village.name || value === village.id || value.includes(`หมู่ ${village.id} `));
+      return found ? found.name : value;
     }
 
     function dimensionAverages(sourceResults, dimension) {
@@ -1196,6 +1300,43 @@
           </div>
         `;
       }).join("");
+
+      const villageStats = villages.map(village => {
+        const items = results.filter(item => normalizeVillage(item) === village.name);
+        const preItems = items.filter(item => normalizePhase(item) === "ก่อนดำเนินการ");
+        const postItems = items.filter(item => normalizePhase(item) === "หลังดำเนินการ");
+        const villageAvg = mean(items.map(item => Number(item.average)).filter(Number.isFinite));
+        const preVillageAvg = mean(preItems.map(item => Number(item.average)).filter(Number.isFinite));
+        const postVillageAvg = mean(postItems.map(item => Number(item.average)).filter(Number.isFinite));
+        return {
+          name: village.name,
+          count: items.length,
+          average: villageAvg,
+          preAverage: preVillageAvg,
+          postAverage: postVillageAvg,
+          change: preItems.length && postItems.length ? postVillageAvg - preVillageAvg : null
+        };
+      });
+
+      els.villageCards.innerHTML = villageStats.map(stat => `
+        <div class="village-card">
+          <strong>${escapeHtml(stat.name)}</strong>
+          <b>${stat.count}</b>
+          <span>เฉลี่ย ${stat.count ? formatNumber(stat.average) : "-"} • ${stat.count ? levelFromAverage(stat.average) : "-"}</span>
+        </div>
+      `).join("");
+
+      els.villageRows.innerHTML = villageStats.map(stat => `
+        <tr>
+          <td>${escapeHtml(stat.name)}</td>
+          <td>${stat.count}</td>
+          <td>${stat.count ? formatNumber(stat.preAverage) : "-"}</td>
+          <td>${stat.count ? formatNumber(stat.postAverage) : "-"}</td>
+          <td>${stat.change === null ? "-" : formatNumber(stat.change)}</td>
+          <td>${stat.count ? formatNumber(stat.average) : "-"}</td>
+          <td>${stat.count ? levelFromAverage(stat.average) : "-"}</td>
+        </tr>
+      `).join("");
     }
 
     function renderDashboard() {
@@ -1210,13 +1351,14 @@
         <tr>
           <td>${formatDate(item.timestamp)}</td>
           <td>${escapeHtml(normalizePhase(item))}</td>
+          <td>${escapeHtml(normalizeVillage(item))}</td>
           <td>${escapeHtml(item.gender || item.name || "")}</td>
           <td>${escapeHtml(item.age || "")}</td>
           <td>${item.score || 0}/50</td>
           <td>${Number(item.average || 0).toFixed(2)}</td>
           <td>${escapeHtml(item.level || "")}</td>
         </tr>
-      `).join("") || `<tr><td colspan="7">ยังไม่มีข้อมูล</td></tr>`;
+      `).join("") || `<tr><td colspan="8">ยังไม่มีข้อมูล</td></tr>`;
       renderAnalytics();
     }
 
@@ -1236,9 +1378,9 @@
     }
 
     function exportCsv() {
-      const header = ["timestamp","phase","gender","age","score","average","level",...questions.map((_, i) => `q${i + 1}`)];
+      const header = ["timestamp","phase","village","gender","age","score","average","level",...questions.map((_, i) => `q${i + 1}`)];
       const rows = results.map(item => [
-        item.timestamp, normalizePhase(item), item.gender || item.name || "", item.age || "", item.score, item.average, item.level, ...(item.answers || [])
+        item.timestamp, normalizePhase(item), normalizeVillage(item), item.gender || item.name || "", item.age || "", item.score, item.average, item.level, ...(item.answers || [])
       ]);
       const csv = [header, ...rows].map(row => row.map(cell => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
       const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
@@ -1251,6 +1393,7 @@
     }
 
     renderQuestions();
+    renderVillageOptions();
     updateScore();
     renderDashboard();
 
@@ -1268,6 +1411,7 @@
       document.querySelector("#surveyForm").reset();
       document.querySelectorAll("input[name='gender']").forEach(input => input.checked = false);
       document.querySelectorAll("input[name='phase']").forEach(input => input.checked = false);
+      document.querySelector("#participantVillage").value = "";
       document.querySelector("#participantAge").value = "";
       updateScore();
     });
