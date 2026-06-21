@@ -220,6 +220,44 @@
       margin: 0 0 14px;
     }
 
+    .literacy-menu[hidden] {
+      display: none;
+    }
+
+    .literacy-toggle {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      margin: 0 0 10px;
+      box-shadow: 0 8px 18px rgba(31, 54, 78, .05);
+      text-align: left;
+      font-weight: 850;
+    }
+
+    .literacy-toggle span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .literacy-toggle svg {
+      flex: 0 0 auto;
+      transition: transform .18s ease;
+    }
+
+    .literacy-toggle[aria-expanded="true"] .chevron {
+      transform: rotate(180deg);
+    }
+
     .literacy-card {
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -863,8 +901,18 @@
           <div class="bar"><span id="progressBar"></span></div>
         </div>
 
-        <div class="section-title">เมนูความรอบรู้ด้านสุขภาพ 3 ด้าน</div>
-        <div class="literacy-menu" aria-label="เมนูความรอบรู้ด้านสุขภาพ 3 ด้าน">
+        <button class="literacy-toggle" id="literacyToggle" type="button" aria-expanded="false" aria-controls="literacyMenu">
+          <span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 11h6M9 15h6M8 3h8l2 3v15H6V6l2-3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            เมนูความรอบรู้ด้านสุขภาพ 3 ด้าน
+          </span>
+          <svg class="chevron" width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="literacy-menu" id="literacyMenu" aria-label="เมนูความรอบรู้ด้านสุขภาพ 3 ด้าน" hidden>
           <article class="literacy-card">
             <div class="literacy-art" aria-hidden="true">
               <svg viewBox="0 0 120 120" role="img">
@@ -1658,6 +1706,12 @@
     document.querySelector("#openMenu").addEventListener("click", openDrawer);
     document.querySelector("#closeMenu").addEventListener("click", closeDrawer);
     document.querySelector("#closeShade").addEventListener("click", closeDrawer);
+    document.querySelector("#literacyToggle").addEventListener("click", () => {
+      const menu = document.querySelector("#literacyMenu");
+      const isOpen = !menu.hidden;
+      menu.hidden = isOpen;
+      document.querySelector("#literacyToggle").setAttribute("aria-expanded", String(!isOpen));
+    });
     document.querySelector("#closeThankBtn").addEventListener("click", closeThankMessage);
     document.querySelector("#thankModal").addEventListener("click", event => {
       if (event.target.id === "thankModal") closeThankMessage();
