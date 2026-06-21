@@ -745,6 +745,21 @@
       line-height: 1.55;
     }
 
+    .comparison-table {
+      min-width: 920px;
+    }
+
+    .topic-cell {
+      min-width: 300px;
+      white-space: normal;
+      line-height: 1.5;
+    }
+
+    .numeric-cell {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
     .notice {
       border-radius: var(--radius);
       padding: 12px;
@@ -1159,6 +1174,27 @@
               <tbody id="descriptiveRows"></tbody>
             </table>
           </div>
+          <div class="section-title">ตารางเปรียบเทียบความรอบรู้ด้านสุขภาพ</div>
+          <div class="field">
+            <label for="comparisonVillageFilter">กรองตารางเปรียบเทียบรายหมู่บ้าน</label>
+            <select id="comparisonVillageFilter"></select>
+          </div>
+          <div class="notice" id="comparisonFilterSummary" style="margin-bottom:12px"></div>
+          <div class="table-wrap" style="margin-bottom:12px">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>ประเด็นการประเมิน</th>
+                  <th>ก่อนดำเนินงาน Mean±SD</th>
+                  <th>ระดับ</th>
+                  <th>หลังดำเนินงาน Mean±SD</th>
+                  <th>ระดับ</th>
+                  <th>ผลต่าง</th>
+                </tr>
+              </thead>
+              <tbody id="comparisonRows"></tbody>
+            </table>
+          </div>
           <div class="section-title">ประมวลผลรายด้าน</div>
           <div class="table-wrap" style="margin-bottom:12px">
             <table>
@@ -1356,6 +1392,9 @@
       resultRows: document.querySelector("#resultRows"),
       descriptiveSummary: document.querySelector("#descriptiveSummary"),
       descriptiveRows: document.querySelector("#descriptiveRows"),
+      comparisonVillageFilter: document.querySelector("#comparisonVillageFilter"),
+      comparisonFilterSummary: document.querySelector("#comparisonFilterSummary"),
+      comparisonRows: document.querySelector("#comparisonRows"),
       dimensionRows: document.querySelector("#dimensionRows"),
       levelBars: document.querySelector("#levelBars"),
       villageCards: document.querySelector("#villageCards"),
@@ -1401,6 +1440,12 @@
     function renderVillageOptions() {
       const select = document.querySelector("#participantVillage");
       select.innerHTML = `<option value="">เลือกหมู่บ้าน</option>` + villages.map(village =>
+        `<option value="${village.name}">${village.name}</option>`
+      ).join("");
+    }
+
+    function renderAdminVillageFilter() {
+      els.comparisonVillageFilter.innerHTML = `<option value="">ทุกหมู่บ้าน</option>` + villages.map(village =>
         `<option value="${village.name}">${village.name}</option>`
       ).join("");
     }
@@ -1626,6 +1671,25 @@
       return Number(value || 0).toFixed(2);
     }
 
+    function reportLevelFromAverage(avg) {
+      if (!Number.isFinite(avg) || avg <= 0) return "-";
+      if (avg >= 4.51) return "ดีมาก";
+      if (avg >= 3.51) return "ดี";
+      if (avg >= 2.51) return "ปานกลาง";
+      if (avg >= 1.51) return "ต่ำ";
+      if (avg >= 1) return "ต่ำมาก";
+      return "-";
+    }
+
+    function formatMeanSd(values) {
+      return values.length ? `${formatNumber(mean(values))}±${formatNumber(standardDeviation(values))}` : "-";
+    }
+
+    function questionValues(sourceResults, questionIndex) {
+      return sourceResults.map(item => getAnswerValues(item)[questionIndex])
+        .filter(value => Number.isFinite(value) && value >= 1 && value <= 5);
+    }
+
     function getAnswerValues(item) {
       return Array.isArray(item.answers) ? item.answers.map(Number) : [];
     }
@@ -1686,6 +1750,12 @@
       const femaleCount = results.filter(item => (item.gender || item.name) === "หญิง").length;
       const preResults = phaseResults("ก่อนดำเนินการ");
       const postResults = phaseResults("หลังดำเนินการ");
+      const selectedComparisonVillage = els.comparisonVillageFilter.value;
+      const comparisonResults = selectedComparisonVillage
+        ? results.filter(item => normalizeVillage(item) === selectedComparisonVillage)
+        : results;
+      const comparisonPreResults = comparisonResults.filter(item => normalizePhase(item) === normalizePhase({ phase: "pre" }));
+      const comparisonPostResults = comparisonResults.filter(item => normalizePhase(item) === normalizePhase({ phase: "post" }));
       const preAvg = mean(preResults.map(item => Number(item.average)).filter(Number.isFinite));
       const postAvg = mean(postResults.map(item => Number(item.average)).filter(Number.isFinite));
       const preLevel = preResults.length ? levelFromAverage(preAvg) : "-";
@@ -1714,6 +1784,28 @@
         <tr><td>อายุเฉลี่ย</td><td>${ages.length ? formatNumber(mean(ages)) : "-"} ปี</td></tr>
         <tr><td>ช่วงอายุ</td><td>${ages.length ? `${ageRange.min}-${ageRange.max} ปี` : "-"}</td></tr>
       ` : `<tr><td colspan="2">ยังไม่มีข้อมูล</td></tr>`;
+
+      els.comparisonFilterSummary.textContent = selectedComparisonVillage
+        ? `แสดงตารางเปรียบเทียบเฉพาะ ${selectedComparisonVillage} จำนวน ${comparisonResults.length} ราย ก่อนดำเนินการ ${comparisonPreResults.length} ราย หลังดำเนินการ ${comparisonPostResults.length} ราย`
+        : `แสดงตารางเปรียบเทียบทุกหมู่บ้าน จำนวน ${comparisonResults.length} ราย ก่อนดำเนินการ ${comparisonPreResults.length} ราย หลังดำเนินการ ${comparisonPostResults.length} ราย`;
+
+      els.comparisonRows.innerHTML = comparisonResults.length ? questions.map((question, index) => {
+        const preValues = questionValues(comparisonPreResults, index);
+        const postValues = questionValues(comparisonPostResults, index);
+        const preQuestionAvg = mean(preValues);
+        const postQuestionAvg = mean(postValues);
+        const diff = preValues.length && postValues.length ? postQuestionAvg - preQuestionAvg : null;
+        return `
+          <tr>
+            <td class="topic-cell">${index + 1}. ${escapeHtml(question)}</td>
+            <td class="numeric-cell">${formatMeanSd(preValues)}</td>
+            <td class="numeric-cell">${preValues.length ? reportLevelFromAverage(preQuestionAvg) : "-"}</td>
+            <td class="numeric-cell">${formatMeanSd(postValues)}</td>
+            <td class="numeric-cell">${postValues.length ? reportLevelFromAverage(postQuestionAvg) : "-"}</td>
+            <td class="numeric-cell">${diff === null ? "-" : formatNumber(diff)}</td>
+          </tr>
+        `;
+      }).join("") : `<tr><td colspan="6">ยังไม่มีข้อมูลสำหรับจัดทำตารางเปรียบเทียบ</td></tr>`;
 
       els.dimensionRows.innerHTML = dimensions.map(dimension => {
         const preValues = dimensionAverages(preResults, dimension);
@@ -1844,6 +1936,7 @@
 
     renderQuestions();
     renderVillageOptions();
+    renderAdminVillageFilter();
     applyPhaseSetting();
     setInterval(applyPhaseSetting, 60000);
     updateScore();
@@ -1866,6 +1959,7 @@
     document.querySelector("#thankModal").addEventListener("click", event => {
       if (event.target.id === "thankModal") closeThankMessage();
     });
+    els.comparisonVillageFilter.addEventListener("change", renderAnalytics);
     document.querySelectorAll("[data-view]").forEach(button => {
       button.addEventListener("click", () => setView(button.dataset.view));
     });
