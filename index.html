@@ -756,6 +756,54 @@
       margin-bottom: 12px;
     }
 
+    .closed-notice {
+      display: none;
+      border-radius: 12px;
+      padding: 5px;
+      margin: 12px 0 18px;
+      background: linear-gradient(135deg, #17324d, var(--teal), var(--green), var(--amber));
+      box-shadow: 0 20px 46px rgba(31, 54, 78, .16);
+    }
+
+    .closed-inner {
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .98);
+      padding: 16px;
+    }
+
+    .closed-inner h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+
+    .closed-inner p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.72;
+    }
+
+    .closed-inner .quote {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--teal-dark);
+      background: #eef8f6;
+      border: 1px solid #cbe9e4;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    .survey-closed .closed-notice {
+      display: block;
+    }
+
+    .survey-closed .survey-open-only {
+      display: none !important;
+    }
+
     .thank-modal {
       position: fixed;
       inset: 0;
@@ -902,7 +950,20 @@
           </div>
         </div>
 
-        <div class="progress-wrap">
+        <div class="closed-notice" id="closedNotice">
+          <div class="closed-inner">
+            <h2>📢 ประกาศปิดการประเมินความรอบรู้ด้านสุขภาพ ตำบลคำใหญ่ ปี 2569</h2>
+            <p>คณะกรรมการพัฒนาสถานีสุขภาพตำบลคำใหญ่ ขอขอบพระคุณพี่น้องประชาชนทุกท่านที่ได้สละเวลาเข้าร่วมตอบแบบประเมินความรอบรู้ด้านสุขภาพ ประจำปี 2569</p>
+            <p>ข้อมูลที่ท่านได้ร่วมตอบแบบประเมินในครั้งนี้ มีคุณค่าอย่างยิ่งต่อการพัฒนาระบบบริการสุขภาพ การวางแผนดูแลสุขภาพประชาชน และการสร้างชุมชนสุขภาวะที่ยั่งยืนของตำบลคำใหญ่</p>
+            <p>ขณะนี้ คณะกรรมการพัฒนาสถานีสุขภาพตำบลคำใหญ่ ขอปิดการประเมินความรอบรู้ด้านสุขภาพ ประจำรอบปัจจุบัน และจะเปิดให้ประชาชนเข้าร่วมประเมินอีกครั้งในเดือนตุลาคม พ.ศ. 2569 เพื่อใช้ติดตามและประเมินผลการพัฒนาสุขภาพของประชาชนอย่างต่อเนื่อง</p>
+            <p>🙏 ขอขอบพระคุณทุกท่านที่ร่วมเป็นส่วนหนึ่งในการพัฒนาสุขภาพของคนคำใหญ่</p>
+            <p class="quote">"รู้ตัวเลขสุขภาพ รู้เท่าทันสุขภาพ ร่วมสร้างคนคำใหญ่สุขภาพดี"</p>
+            <p>ขอขอบพระคุณเป็นอย่างสูง</p>
+            <p><b>คณะกรรมการพัฒนาสถานีสุขภาพตำบลคำใหญ่</b><br>21 มิถุนายน 2569</p>
+          </div>
+        </div>
+
+        <div class="progress-wrap survey-open-only">
           <div class="progress-meta">
             <span id="answeredCount">ตอบแล้ว 0/10</span>
             <span>ค่าเฉลี่ย <b id="avgNow">0.00</b></span>
@@ -910,7 +971,7 @@
           <div class="bar"><span id="progressBar"></span></div>
         </div>
 
-        <button class="literacy-toggle" id="literacyToggle" type="button" aria-expanded="false" aria-controls="literacyMenu">
+        <button class="literacy-toggle survey-open-only" id="literacyToggle" type="button" aria-expanded="false" aria-controls="literacyMenu">
           <span>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M9 11h6M9 15h6M8 3h8l2 3v15H6V6l2-3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -921,7 +982,7 @@
             <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
-        <div class="literacy-menu" id="literacyMenu" aria-label="เมนูความรอบรู้ด้านสุขภาพ" hidden>
+        <div class="literacy-menu survey-open-only" id="literacyMenu" aria-label="เมนูความรอบรู้ด้านสุขภาพ" hidden>
           <article class="literacy-card">
             <div class="literacy-art" aria-hidden="true">
               <svg viewBox="0 0 120 120" role="img">
@@ -1035,7 +1096,7 @@
           </article>
         </div>
 
-        <div class="field">
+        <div class="field survey-open-only">
           <label>เพศ</label>
           <div class="segment" role="radiogroup" aria-label="เพศ">
             <input id="genderMale" name="gender" value="ชาย" type="radio">
@@ -1044,17 +1105,17 @@
             <label for="genderFemale">หญิง</label>
           </div>
         </div>
-        <div class="field">
+        <div class="field survey-open-only">
           <label for="participantAge">อายุ (ปี)</label>
           <input id="participantAge" type="number" min="1" max="120" inputmode="numeric" placeholder="ระบุอายุ">
         </div>
-        <div class="field">
+        <div class="field survey-open-only">
           <label for="participantVillage">หมู่บ้านในตำบลคำใหญ่</label>
           <select id="participantVillage">
             <option value="">เลือกหมู่บ้าน</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field survey-open-only">
           <label>ครั้งที่ประเมิน</label>
           <div class="locked-phase">
             <span id="activePhaseLabel">ก่อนดำเนินการ</span>
@@ -1062,7 +1123,7 @@
           </div>
         </div>
 
-        <form id="surveyForm"></form>
+        <form id="surveyForm" class="survey-open-only"></form>
       </section>
 
       <section class="panel" id="adminPanel">
@@ -1148,6 +1209,14 @@
               <small>ตั้งแต่ 12.00 น. เป็นหลังดำเนินการ</small>
             </div>
           </div>
+          <div class="field">
+            <label>สถานะการประเมินความรอบรู้ด้านสุขภาพ</label>
+            <div class="locked-phase">
+              <span id="surveyStatusLabel">เปิดการประเมิน</span>
+              <small>ควบคุมโดย Admin</small>
+            </div>
+          </div>
+          <button class="btn secondary" id="toggleSurveyBtn" type="button" style="width:100%;margin-bottom:10px">ปิดการประเมิน</button>
           <button class="btn secondary" id="saveSettings" type="button" style="width:100%;margin-bottom:10px">บันทึกการตั้งค่า</button>
           <div class="small-actions no-print">
             <button class="btn" id="syncBtn" type="button">ซิงก์จาก Sheet</button>
@@ -1299,6 +1368,7 @@
     let settings = JSON.parse(localStorage.getItem("healthLiteracySettings") || "{}");
     let isSaving = false;
     settings.scriptUrl = settings.scriptUrl || DEFAULT_SCRIPT_URL;
+    settings.surveyOpen = settings.surveyOpen !== false;
     els.scriptUrl.value = settings.scriptUrl;
 
     function levelFromAverage(avg) {
@@ -1368,10 +1438,23 @@
       const isAdmin = view === "admin";
       els.surveyPanel.classList.toggle("active", !isAdmin);
       els.adminPanel.classList.toggle("active", isAdmin);
-      els.surveyActions.classList.toggle("hidden", isAdmin);
+      applySurveyStatus(isAdmin);
       els.screenTitle.textContent = isAdmin ? "Admin Dashboard" : "ประเมินความรอบรู้ด้านสุขภาพ";
       closeDrawer();
       if (isAdmin) renderDashboard();
+    }
+
+    function applySurveyStatus(isAdminView = els.adminPanel.classList.contains("active")) {
+      const isOpen = settings.surveyOpen !== false;
+      els.surveyPanel.classList.toggle("survey-closed", !isOpen);
+      els.surveyActions.classList.toggle("hidden", isAdminView || !isOpen);
+      const statusLabel = document.querySelector("#surveyStatusLabel");
+      const toggleButton = document.querySelector("#toggleSurveyBtn");
+      if (statusLabel) statusLabel.textContent = isOpen ? "เปิดการประเมิน" : "ปิดการประเมิน";
+      if (toggleButton) {
+        toggleButton.textContent = isOpen ? "ปิดการประเมิน" : "เปิดการประเมิน";
+        toggleButton.classList.toggle("secondary", isOpen);
+      }
     }
 
     function openDrawer() {
@@ -1454,6 +1537,10 @@
 
     async function submitSurvey() {
       if (isSaving) return;
+      if (settings.surveyOpen === false) {
+        alert("ขณะนี้ปิดการประเมินความรอบรู้ด้านสุขภาพ");
+        return;
+      }
       const answers = readAnswers();
       if (answers.some(value => value === 0)) {
         alert("กรุณาตอบให้ครบทั้ง 10 ข้อ");
@@ -1761,6 +1848,7 @@
     setInterval(applyPhaseSetting, 60000);
     updateScore();
     renderDashboard();
+    applySurveyStatus(false);
 
     document.addEventListener("change", event => {
       if (event.target.matches("input[type='radio']")) updateScore();
@@ -1796,13 +1884,21 @@
       }
       document.querySelector("#adminLogin").classList.add("hidden");
       document.querySelector("#adminContent").classList.remove("hidden");
+      applySurveyStatus(true);
       renderDashboard();
+    });
+    document.querySelector("#toggleSurveyBtn").addEventListener("click", () => {
+      settings.surveyOpen = !(settings.surveyOpen !== false);
+      localStorage.setItem("healthLiteracySettings", JSON.stringify(settings));
+      applySurveyStatus(true);
+      alert(settings.surveyOpen ? "เปิดการประเมินแล้ว" : "ปิดการประเมินแล้ว");
     });
     document.querySelector("#saveSettings").addEventListener("click", () => {
       settings.scriptUrl = els.scriptUrl.value.trim() || DEFAULT_SCRIPT_URL;
       els.scriptUrl.value = settings.scriptUrl;
       localStorage.setItem("healthLiteracySettings", JSON.stringify(settings));
       applyPhaseSetting();
+      applySurveyStatus(true);
       alert("บันทึกการตั้งค่าแล้ว");
     });
     document.querySelector("#syncBtn").addEventListener("click", async () => {
