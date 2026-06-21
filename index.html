@@ -1142,12 +1142,10 @@
             <input id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
           </div>
           <div class="field">
-            <label>ตั้งค่าครั้งที่ประเมินสำหรับผู้ตอบแบบประเมิน</label>
-            <div class="segment" role="radiogroup" aria-label="ตั้งค่าครั้งที่ประเมิน">
-              <input id="adminPhasePre" name="adminPhase" value="ก่อนดำเนินการ" type="radio">
-              <label for="adminPhasePre">ก่อนดำเนินการ</label>
-              <input id="adminPhasePost" name="adminPhase" value="หลังดำเนินการ" type="radio">
-              <label for="adminPhasePost">หลังดำเนินการ</label>
+            <label>ครั้งที่ประเมินอัตโนมัติตามเวลา</label>
+            <div class="locked-phase">
+              <span id="adminActivePhaseLabel">ก่อนดำเนินการ</span>
+              <small>ตั้งแต่ 12.00 น. เป็นหลังดำเนินการ</small>
             </div>
           </div>
           <button class="btn secondary" id="saveSettings" type="button" style="width:100%;margin-bottom:10px">บันทึกการตั้งค่า</button>
@@ -1301,7 +1299,6 @@
     let settings = JSON.parse(localStorage.getItem("healthLiteracySettings") || "{}");
     let isSaving = false;
     settings.scriptUrl = settings.scriptUrl || DEFAULT_SCRIPT_URL;
-    settings.activePhase = settings.activePhase || "ก่อนดำเนินการ";
     els.scriptUrl.value = settings.scriptUrl;
 
     function levelFromAverage(avg) {
@@ -1339,10 +1336,13 @@
     }
 
     function applyPhaseSetting() {
-      const activePhase = settings.activePhase || "ก่อนดำเนินการ";
+      const activePhase = getCurrentPhase();
       document.querySelector("#activePhaseLabel").textContent = activePhase;
-      const adminPhase = document.querySelector(`input[name="adminPhase"][value="${activePhase}"]`);
-      if (adminPhase) adminPhase.checked = true;
+      document.querySelector("#adminActivePhaseLabel").textContent = activePhase;
+    }
+
+    function getCurrentPhase() {
+      return new Date().getHours() >= 12 ? "หลังดำเนินการ" : "ก่อนดำเนินการ";
     }
 
     function readAnswers() {
@@ -1474,7 +1474,7 @@
         alert("กรุณาเลือกหมู่บ้าน");
         return;
       }
-      const phase = settings.activePhase || "ก่อนดำเนินการ";
+      const phase = getCurrentPhase();
       if (!phase) {
         alert("กรุณาให้ Admin ตั้งค่าครั้งที่ประเมิน");
         return;
@@ -1758,6 +1758,7 @@
     renderQuestions();
     renderVillageOptions();
     applyPhaseSetting();
+    setInterval(applyPhaseSetting, 60000);
     updateScore();
     renderDashboard();
 
@@ -1800,7 +1801,6 @@
     document.querySelector("#saveSettings").addEventListener("click", () => {
       settings.scriptUrl = els.scriptUrl.value.trim() || DEFAULT_SCRIPT_URL;
       els.scriptUrl.value = settings.scriptUrl;
-      settings.activePhase = document.querySelector("input[name='adminPhase']:checked")?.value || "ก่อนดำเนินการ";
       localStorage.setItem("healthLiteracySettings", JSON.stringify(settings));
       applyPhaseSetting();
       alert("บันทึกการตั้งค่าแล้ว");
